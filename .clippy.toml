@@ -1,0 +1,2 @@
+# default is 250
+type-complexity-threshold = 500
