@@ -1,6 +1,7 @@
 use std::{
   fs::File,
   io::{self, BufReader},
+  path::Path,
   process,
 };
 
@@ -35,6 +36,21 @@ fn files_exist_or_exit(input_paths: &Vec<std::path::PathBuf>) {
   }
 }
 
+fn get_format_by_file_extension(input_path: &Path) -> Option<String> {
+  match input_path.extension() {
+    Some(extension) => match extension.to_str() {
+      Some(extension) => match extension {
+        "json" => Some("json".to_string()),
+        "yaml" => Some("yaml".to_string()),
+        "toml" => Some("toml".to_string()),
+        _ => None,
+      },
+      None => None,
+    },
+    None => None,
+  }
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut writer = Terminal {};
   let cli = config::get_cli();
@@ -63,32 +79,45 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       files_exist_or_exit(input_paths);
 
       for input_path in input_paths {
-        if format == "json" {
+        // If the format is not specified, then use the file extension to determine
+        // the format.
+        let input_format = match format {
+          Some(format) => format.to_owned(),
+          None => match get_format_by_file_extension(input_path) {
+            Some(format) => format,
+            None => {
+              eprintln!("Error: Could not determine format from file extension");
+              process::exit(1);
+            }
+          },
+        };
+
+        if input_format == "json" {
           let reader = BufReader::new(File::open(input_path)?);
           let result: serde_json::Value = match serde_json::from_reader(reader) {
             Ok(v) => v,
             Err(e) => {
-              eprintln!("Error: {}", e);
+              eprintln!("Error: {:?} {} {} {:?}", e.classify(), e.column(), e.line(), e);
               process::exit(1);
             }
           };
           serde_cbor::to_writer(std::io::stdout(), &result)?;
-        } else if format == "yaml" {
+        } else if input_format == "yaml" {
           let reader = BufReader::new(File::open(input_path)?);
           let result: serde_yaml::Value = match serde_yaml::from_reader(reader) {
             Ok(v) => v,
             Err(e) => {
-              eprintln!("Error: {}", e);
+              eprintln!("Error: {:?}, {:?}", e.location(), e);
               process::exit(1);
             }
           };
           serde_cbor::to_writer(std::io::stdout(), &result)?;
-        } else if format == "toml" {
+        } else if input_format == "toml" {
           let s = std::fs::read_to_string(input_path)?;
           let result: toml::Value = match toml::de::from_str(&s) {
             Ok(v) => v,
             Err(e) => {
-              eprintln!("Error: {}", e);
+              eprintln!("Error: {} {:?} {:?}", e.message(), e.span(), e);
               process::exit(1);
             }
           };
