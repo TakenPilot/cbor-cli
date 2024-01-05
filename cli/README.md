@@ -22,7 +22,7 @@ cargo install cbor-cli
 cbor import test.json > test.cbor
 ```
 
-# Export
+## Export
 
 Example of exporting to a JSON file:
 
@@ -30,16 +30,16 @@ Example of exporting to a JSON file:
 cbor export --format=json test.cbor > test.json
 ```
 
+Example of importing in one format and exporting in another:
+
+```bash
+cbor import test.json | cbor export --format=yaml > test.yaml
+```
+
 Example of importing stdin and then exporting to stdout:
 
 ```bash
 cat test1.json test2.json | cbor import --format=json | cbor -d=",\n" export --format=json
-```
-
-Example of importing in one format and exporting in another:
-
-```bash
-cbor import test.json | cbor -d=",\n" export --format=yaml > test.yaml
 ```
 
 ## Inspect
