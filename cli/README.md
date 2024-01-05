@@ -1,6 +1,14 @@
 # CBOR CLI
 
-A command line tool for encoding and decoding CBOR using the serde crate to do encoding and decoding from various file formats to and from CBOR.
+Command line tool for encoding and decoding CBOR using serde. Supports import and export for JSON, YAML, and TOML. Supports deep inspection of CBOR files.
+
+Features:
+
+- Import and Export from JSON, YAML, TOML
+- Inspect CBOR files for debugging
+- Supports piped input and output (stdin and stdout)
+- Supports multiple input files or multiple items in a single file
+- Supports custom delimiters output
 
 ## Installation
 
@@ -8,25 +16,30 @@ A command line tool for encoding and decoding CBOR using the serde crate to do e
 cargo install cbor-cli
 ```
 
-## Import from file format into CBOR
+## Import
 
 ```bash
 cbor import test.json > test.cbor
 ```
 
-## Export from CBOR into some file format.
+# Export
+
+Example of exporting to a JSON file:
 
 ```bash
 cbor export --format=json test.cbor > test.json
 ```
 
-## Delimiter
-
-The default delimiter is a newline. You can change it to a comma or any other
-string of characters.
+Example of importing stdin and then exporting to stdout:
 
 ```bash
-cbor to --format=json --delimiter=, test.cbor > test.json
+cat test1.json test2.json | cbor import --format=json | cbor -d=",\n" export --format=json
+```
+
+Example of importing in one format and exporting in another:
+
+```bash
+cbor import test.json | cbor -d=",\n" export --format=yaml > test.yaml
 ```
 
 ## Inspect
@@ -37,9 +50,22 @@ For debugging, you can dump the structure of one or more CBOR files to stdout.
 cbor inspect test.cbor
 ```
 
+You can inspect the resulting data across multiple types of files if you pipe to cbor first:
+
+```bash
+cbor import ../fixtures/test.json ../fixtures/test.yaml | cbor inspect
+```
+
+## Delimiter
+
+You can specify a unique delimiter.
+
+```bash
+cbor export --format=json --delimiter=, test.cbor > test.json
+```
+
 ## TODO
 
-- Piped input
 - Import and Export to Parquet
 - Inspect Tag support: Compression
 - Inspect Tag support: Date, Time, Timestamp

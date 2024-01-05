@@ -9,8 +9,8 @@ pub struct Cli {
   pub verbose: u8,
 
   /// Delimiter to use when printing multiple values
-  #[arg(short, long, default_value = "\n")]
-  pub delimiter: String,
+  #[arg(short, long)]
+  pub delimiter: Option<String>,
 
   #[command(subcommand)]
   pub command: Option<Commands>,
