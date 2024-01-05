@@ -1,4 +1,8 @@
-use std::{fs::File, io::BufReader, process};
+use std::{
+  fs::File,
+  io::{self, BufReader},
+  process,
+};
 
 use cbor_cli::{
   config::{self, Commands},
@@ -71,8 +75,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       }
     }
 
-    Some(Commands::Export { input_paths, format: _ }) => {
+    Some(Commands::Export { input_paths, format }) => {
       files_exist_or_exit(input_paths);
+
+      if cli.verbose > 0 {
+        writer.write(format!("Files to export: {:?}", input_paths))?;
+        writer.write(format!("Exporting to {} format", format))?;
+      }
 
       for (i, input_path) in input_paths.iter().enumerate() {
         if i > 0 {
@@ -93,14 +102,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if i > 0 {
               print!("{}", cli.delimiter);
             }
-            serde_json::to_writer(std::io::stdout(), &v)
+            if format == "json" {
+              serde_json::to_writer(io::stdout(), &v).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            } else if format == "yaml" {
+              serde_yaml::to_writer(io::stdout(), &v).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            } else if format == "toml" {
+              let s = toml::ser::to_string(&v).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+              print!("{}", s);
+            } else {
+              serde_cbor::to_writer(io::stdout(), &v).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            }
+            Ok::<(), io::Error>(())
           })?;
       }
     }
     None => {}
   }
-
-  println!();
 
   Ok(())
 }

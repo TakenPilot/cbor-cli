@@ -10,3 +10,6 @@ colored = { version = "2.1.0" }
 cbor = { path="../cbor" }
 serde_cbor = { version = "0.11.2", features = ["std", "alloc", "tags"] }
 serde_json = { version = "1.0.111", features = ["alloc", "preserve_order"] }
+serde_yaml = "0.9.30"
+toml = { version = "0.8.8", features = ["indexmap", "preserve_order"] }
+csv = "1.3.0"

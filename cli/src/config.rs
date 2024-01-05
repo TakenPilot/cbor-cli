@@ -32,8 +32,8 @@ pub enum Commands {
 
     /// Format of the input file. If not specified, the file extension will be
     /// used to determine the type.
-    #[arg(long, value_name = "FORMAT")]
-    format: Option<String>,
+    #[arg(long, value_name = "FORMAT", default_value = "json")]
+    format: String,
   },
 
   /// Convert CBOR files to some other type.
@@ -43,8 +43,8 @@ pub enum Commands {
 
     /// Format of the output file. If not specified, the file extension will be
     /// used to determine the type.
-    #[arg(long, value_name = "FORMAT")]
-    format: Option<String>,
+    #[arg(long, value_name = "FORMAT", default_value = "json")]
+    format: String,
   },
 }
 
