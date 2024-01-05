@@ -1,4 +1,4 @@
-# CBOR cli
+# CBOR CLI
 
 This is a command line tool for encoding and decoding CBOR. It uses the
 serde crate to do encoding and decoding from various file formats to and
@@ -42,12 +42,6 @@ cbor inspect test.cbor
 ## TODO
 
 - Piped input
-- `cbor import test.json > test.cbor`
-- `cbor export --format=json test.cbor > test.json`
-- Import and Export to CSV
-- Import and Export to YAML
-- Import and Export to TOML
-- Import and Export to XML
 - Import and Export to Parquet
 - Inspect Tag support: Compression
 - Inspect Tag support: Date, Time, Timestamp
