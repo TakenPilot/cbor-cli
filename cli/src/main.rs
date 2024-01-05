@@ -35,11 +35,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut writer = Terminal {};
   let cli = config::get_cli();
 
-  // You can check for the existence of subcommands, and if found use their
-  // matches just as you would the top level cmd
-
   match &cli.command {
-    Some(Commands::Dump { input_paths }) => {
+    Some(Commands::Inspect { input_paths }) => {
       files_exist_or_exit(input_paths);
 
       for input_path in input_paths {
@@ -58,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       }
     }
 
-    Some(Commands::To { input_paths, format: _ }) => {
+    Some(Commands::Import { input_paths, format: _ }) => {
       files_exist_or_exit(input_paths);
 
       for input_path in input_paths {
@@ -74,7 +71,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       }
     }
 
-    Some(Commands::From { input_paths, format: _ }) => {
+    Some(Commands::Export { input_paths, format: _ }) => {
       files_exist_or_exit(input_paths);
 
       for (i, input_path) in input_paths.iter().enumerate() {

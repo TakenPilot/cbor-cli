@@ -19,14 +19,14 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
   /// Deep inspection of CBOR files, useful for debugging, learning or repairing files.
-  Dump {
+  Inspect {
     #[arg(value_name = "INPUT_PATHS")]
     input_paths: Vec<PathBuf>,
   },
 
   /// Convert a file of some other type to CBOR. Uses the file extension to
   /// determine the type if not specified.
-  To {
+  Import {
     #[arg(value_name = "INPUT_PATHS")]
     input_paths: Vec<PathBuf>,
 
@@ -37,7 +37,7 @@ pub enum Commands {
   },
 
   /// Convert CBOR files to some other type.
-  From {
+  Export {
     #[arg(value_name = "INPUT_PATHS")]
     input_paths: Vec<PathBuf>,
 
