@@ -1,8 +1,6 @@
 # CBOR CLI
 
-This is a command line tool for encoding and decoding CBOR. It uses the
-serde crate to do encoding and decoding from various file formats to and
-from CBOR.
+A command line tool for encoding and decoding CBOR using the serde crate to do encoding and decoding from various file formats to and from CBOR.
 
 ## Installation
 

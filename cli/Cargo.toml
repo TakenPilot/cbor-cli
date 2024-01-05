@@ -2,7 +2,8 @@
 name = "cbor-cli"
 edition = "2021"
 version = "0.1.0"
-license = "Apache"
+license = "Apache-2.0"
+description = "A command line tool for encoding and decoding CBOR using the serde crate to do encoding and decoding from various file formats to and from CBOR."
 
 [[bin]]
 name = "cbor"
