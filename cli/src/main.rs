@@ -59,19 +59,53 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       }
     }
 
-    Some(Commands::Import { input_paths, format: _ }) => {
+    Some(Commands::Import { input_paths, format }) => {
       files_exist_or_exit(input_paths);
 
       for input_path in input_paths {
-        let reader = BufReader::new(File::open(input_path)?);
-        let result: serde_json::Value = match serde_json::from_reader(reader) {
-          Ok(v) => v,
-          Err(e) => {
-            eprintln!("Error: {}", e);
-            process::exit(1);
-          }
-        };
-        serde_cbor::to_writer(std::io::stdout(), &result)?;
+        if format == "json" {
+          let reader = BufReader::new(File::open(input_path)?);
+          let result: serde_json::Value = match serde_json::from_reader(reader) {
+            Ok(v) => v,
+            Err(e) => {
+              eprintln!("Error: {}", e);
+              process::exit(1);
+            }
+          };
+          serde_cbor::to_writer(std::io::stdout(), &result)?;
+        } else if format == "yaml" {
+          let reader = BufReader::new(File::open(input_path)?);
+          let result: serde_yaml::Value = match serde_yaml::from_reader(reader) {
+            Ok(v) => v,
+            Err(e) => {
+              eprintln!("Error: {}", e);
+              process::exit(1);
+            }
+          };
+          serde_cbor::to_writer(std::io::stdout(), &result)?;
+        } else if format == "toml" {
+          let s = std::fs::read_to_string(input_path)?;
+          let result: toml::Value = match toml::de::from_str(&s) {
+            Ok(v) => v,
+            Err(e) => {
+              eprintln!("Error: {}", e);
+              process::exit(1);
+            }
+          };
+          serde_cbor::to_writer(std::io::stdout(), &result)?;
+        } else {
+          let reader = BufReader::new(File::open(input_path)?);
+          serde_cbor::de::Deserializer::from_reader(reader)
+            .into_iter::<serde_cbor::Value>()
+            .map(|v| match v {
+              Ok(v) => v,
+              Err(e) => {
+                eprintln!("Error: {:?} {} {:?}", e.classify(), e.offset(), e);
+                process::exit(1);
+              }
+            })
+            .for_each(|v| serde_cbor::to_writer(std::io::stdout(), &v).unwrap());
+        }
       }
     }
 
