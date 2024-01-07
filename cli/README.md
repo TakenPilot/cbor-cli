@@ -12,6 +12,15 @@ Features:
 
 ## Installation
 
+### Homebrew
+
+```bash
+brew tap takenpilot/cbor
+brew install cbor-cli
+```
+
+### Cargo
+
 ```bash
 cargo install cbor-cli
 ```
