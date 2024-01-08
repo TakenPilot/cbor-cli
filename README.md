@@ -85,3 +85,29 @@ cbor export --format=json --delimiter=, test.cbor > test.json
 - Inspect Tag support: Base64
 - Inspect Tag support: Base16
 - Inspect Tag support: URI and URLs
+
+## Development
+
+```bash
+brew install dpkg
+```
+
+```bash
+cargo install cargo-deb
+rustup target add i686-unknown-linux-gnu
+cargo deb --target=i686-unknown-linux-gnu
+```
+
+## Debian
+
+TODO: Build-Depends due to Architecture: any?
+https://www.debian.org/doc/manuals/maint-guide/dreq.en.html
+
+dpkg-depcheck -d ./configure ?
+objdump -p /usr/bin/foo | grep NEEDED ?
+dpkg -S libfoo.so.6 ?
+
+colima start
+docker run debian
+
+RUSTFLAGS='-C linker=x86_64-linux-gnu-gcc' cargo build --release --target x86_64-unknown-linux-gnu

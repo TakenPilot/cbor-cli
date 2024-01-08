@@ -1,0 +1,5 @@
+cbor-cli (0.5.0-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Dane Stuckel <dane.stuckel@gmail.com>  Mon, 08 Jan 2024 16:58:49 +0700
