@@ -1,3 +1,23 @@
-[workspace]
-members = ["cli"]
+[package]
+name = "cbor-cli"
+authors = ["Dane Stuckel <dane.stuckel@gmail.com>"]
+edition = "2021"
+version = "0.4.0"
+license = "Apache-2.0"
+description = "Command line tool for encoding and decoding CBOR using serde. Supports import and export for JSON, YAML, and TOML. Supports deep inspection of CBOR files."
+repository = "https://github.com/TakenPilot/cbor-rs/tree/main/cli"
 resolver = "2"
+
+[[bin]]
+name = "cbor"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.4.12", features = ["env", "derive"] }
+serde_cbor = { version = "0.11.2", features = ["std", "alloc", "tags"] }
+serde_json = { version = "1.0.111", features = ["alloc", "preserve_order"] }
+serde_yaml = "0.9.30"
+toml = { version = "0.8.8", features = ["indexmap", "preserve_order"] }
+
+[dev-dependencies]
+common-testing = "1.1.1"
