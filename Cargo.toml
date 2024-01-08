@@ -2,7 +2,7 @@
 name = "cbor-cli"
 authors = ["Dane Stuckel <dane.stuckel@gmail.com>"]
 edition = "2021"
-version = "0.4.0"
+version = "0.5.0"
 license = "Apache-2.0"
 description = "Command line tool for encoding and decoding CBOR using serde. Supports import and export for JSON, YAML, and TOML. Supports deep inspection of CBOR files."
 repository = "https://github.com/TakenPilot/cbor-rs/tree/main/cli"
