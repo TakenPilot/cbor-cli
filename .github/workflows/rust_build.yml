@@ -22,14 +22,13 @@ jobs:
           # Add other targets as needed
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           target: ${{ matrix.target }}
-          override: true
 
       - name: Install ARM cross-compilation tools for aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -44,6 +43,9 @@ jobs:
 
       - name: Build with cross
         run: cross build --target ${{ matrix.target }} --release
+
+      - name: Check executable format
+        run: file target/${{ matrix.target }}/release/cbor
 
       - name: Copy License
         run: cp LICENSE target/${{ matrix.target }}/release/
@@ -63,8 +65,29 @@ jobs:
       - name: Create Debian Package
         run: cargo deb --target ${{ matrix.target }} --no-build
 
+      - name: Install GPG and dpkg-sig
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg dpkg-sig
+
+      - name: Import GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import --no-tty --batch --yes
+
+      - name: Sign Debian packages
+        run: dpkg-sig --sign builder target/${{ matrix.target }}/debian/*.deb
+
+      - name: Install lintian
+        run: sudo apt-get install -y lintian
+
+      - name: Lint .deb package
+        run: lintian target/${{ matrix.target }}/debian/*.deb
+
+      - name: List contents of .deb package
+        run: dpkg -c target/${{ matrix.target }}/debian/*.deb
+
       - name: Upload Debian Package
         uses: actions/upload-artifact@v4
         with:
           name: cbor-${{ matrix.target }}.deb
-          path: target/${{ matrix.target }}/debian/cbor*.deb
+          path: target/${{ matrix.target }}/debian/*.deb
